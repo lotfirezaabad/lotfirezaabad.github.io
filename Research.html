@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)file://files.umn.edu/cse/UmSaveDocs/anikolak/Documents/Jula%20Code/MySite.html#learning-mnist -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz" rel="stylesheet"> 
+  <title>
+  Fatemeh Sheikholeslami
+</title>
+
+  <meta name="author" content="Athanasios Nikolakopoulos" >
+  <meta name="description" content="data mining, recommender systems, machine-learning, graph, ranking, numerical linear algebra, markov chain">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="clustering, data mining, link-analysis, ranking, signal processing on graph, recommender systems, collaborative filtering, julia programming language, software">
+  <link rel="alternate" type="application/rss+xml" href="file://files.umn.edu/atom.xml">
+
+
+  <link rel="stylesheet" href="./css/academicons.css"/>
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="./MySite_files/base.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="./MySite_files/pygments.css" type="text/css">
+  <link media="only screen and (max-device-width: 480px)" href="./MySite_files/mobile.css" type="text/css" rel="stylesheet">
+  <link media="only screen and (device-width: 768px)" href="./MySite_files/mobile.css" type="text/css" rel="stylesheet">
+  <link rel="apple-touch-icon" href="http://www.breloff.com/apple-touch-icon.png">
+
+
+  <script type="text/javascript">
+
+
+  <!-- 
+
+  // Search settings
+  var searchAbstract = true;	// search in abstract
+  var searchReview = true;	// search in review
+
+  var noSquiggles = true; 	// ignore diacritics when searching
+  var searchRegExp = false; 	// enable RegExp searches
+
+
+  if (window.addEventListener) {
+  	window.addEventListener("load",initSearch,false); }
+  else if (window.attachEvent) {
+  	window.attachEvent("onload", initSearch); }
+
+  function initSearch() {
+  	// check for quick search table and searchfield
+  	if (!document.getElementById('qs_table')||!document.getElementById('quicksearch')) { return; }
+
+  	// load all the rows and sort into arrays
+  	loadTableData();
+
+  	//find the query field
+  	qsfield = document.getElementById('qs_field');
+
+  	// previous search term; used for speed optimisation
+  	prevSearch = '';
+
+  	//find statistics location
+  	stats = document.getElementById('stat');
+  	setStatistics(-1);
+
+  	// set up preferences
+  	initPreferences();
+
+  	// shows the searchfield
+  	document.getElementById('quicksearch').style.display = 'block';
+  	document.getElementById('qs_field').onkeyup = quickSearch;
+  }
+
+  function loadTableData() {
+  	// find table and appropriate rows
+  	searchTable = document.getElementById('qs_table');
+  	var allRows = searchTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+  	// split all rows into entryRows and infoRows (e.g. abstract, review, bibtex)
+  	entryRows = new Array(); infoRows = new Array(); absRows = new Array(); revRows = new Array();
+
+  	// get data from each row
+  	entryRowsData = new Array(); absRowsData = new Array(); revRowsData = new Array();
+
+  	BibTeXKeys = new Array();
+
+  	for (var i=0, k=0, j=0; i<allRows.length;i++) {
+  		if (allRows[i].className.match(/entry/)) {
+  			entryRows[j] = allRows[i];
+  			entryRowsData[j] = stripDiacritics(getTextContent(allRows[i]));
+  			allRows[i].id ? BibTeXKeys[j] = allRows[i].id : allRows[i].id = 'autokey_'+j;
+  			j ++;
+  		} else {
+  			infoRows[k++] = allRows[i];
+  			// check for abstract/review
+  			if (allRows[i].className.match(/abstract/)) {
+  				absRows.push(allRows[i]);
+  				absRowsData[j-1] = stripDiacritics(getTextContent(allRows[i]));
+  			} else if (allRows[i].className.match(/review/)) {
+  				revRows.push(allRows[i]);
+  				revRowsData[j-1] = stripDiacritics(getTextContent(allRows[i]));
+  			}
+  		}
+  	}
+  	//number of entries and rows
+  	numEntries = entryRows.length;
+  	numInfo = infoRows.length;
+  	numAbs = absRows.length;
+  	numRev = revRows.length;
+  }
+
+  function quickSearch(){
+
+  	tInput = qsfield;
+
+  	if (tInput.value.length == 0) {
+  		showAll();
+  		setStatistics(-1);
+  		qsfield.className = '';
+  		return;
+  	} else {
+  		t = stripDiacritics(tInput.value);
+
+  		if(!searchRegExp) { t = escapeRegExp(t); }
+
+  		// only search for valid RegExp
+  		try {
+  			textRegExp = new RegExp(t,"i");
+  			closeAllInfo();
+  			qsfield.className = '';
+  		}
+  			catch(err) {
+  			prevSearch = tInput.value;
+  			qsfield.className = 'invalidsearch';
+  			return;
+  		}
+  	}
+
+  	// count number of hits
+  	var hits = 0;
+
+  	// start looping through all entry rows
+  	for (var i = 0; cRow = entryRows[i]; i++){
+
+  		// only show search the cells if it isn't already hidden OR if the search term is getting shorter, then search all
+  		if(cRow.className.indexOf('noshow')==-1 || tInput.value.length <= prevSearch.length){
+  			var found = false;
+
+  			if (entryRowsData[i].search(textRegExp) != -1 || BibTeXKeys[i].search(textRegExp) != -1){
+  				found = true;
+  			} else {
+  				if(searchAbstract && absRowsData[i]!=undefined) {
+  					if (absRowsData[i].search(textRegExp) != -1){ found=true; }
+  				}
+  				if(searchReview && revRowsData[i]!=undefined) {
+  					if (revRowsData[i].search(textRegExp) != -1){ found=true; }
+  				}
+  			}
+
+  			if (found){
+  				cRow.className = 'entry show';
+  				hits++;
+  			} else {
+  				cRow.className = 'entry noshow';
+  			}
+  		}
+  	}
+
+  	// update statistics
+  	setStatistics(hits)
+
+  	// set previous search value
+  	prevSearch = tInput.value;
+  }
+
+
+  // Strip Diacritics from text
+  // http://stackoverflow.com/questions/990904/javascript-remove-accents-in-strings
+
+  // String containing replacement characters for stripping accents
+  var stripstring =
+      'AAAAAAACEEEEIIII'+
+      'DNOOOOO.OUUUUY..'+
+      'aaaaaaaceeeeiiii'+
+      'dnooooo.ouuuuy.y'+
+      'AaAaAaCcCcCcCcDd'+
+      'DdEeEeEeEeEeGgGg'+
+      'GgGgHhHhIiIiIiIi'+
+      'IiIiJjKkkLlLlLlL'+
+      'lJlNnNnNnnNnOoOo'+
+      'OoOoRrRrRrSsSsSs'+
+      'SsTtTtTtUuUuUuUu'+
+      'UuUuWwYyYZzZzZz.';
+
+  function stripDiacritics(str){
+
+      if(noSquiggles==false){
+          return str;
+      }
+
+      var answer='';
+      for(var i=0;i<str.length;i++){
+          var ch=str[i];
+          var chindex=ch.charCodeAt(0)-192;   // Index of character code in the strip string
+          if(chindex>=0 && chindex<stripstring.length){
+              // Character is within our table, so we can strip the accent...
+              var outch=stripstring.charAt(chindex);
+              // ...unless it was shown as a '.'
+              if(outch!='.')ch=outch;
+          }
+          answer+=ch;
+      }
+      return answer;
+  }
+
+  // http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+  // NOTE: must escape every \ in the export code because of the JabRef Export...
+  function escapeRegExp(str) {
+    return str.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  }
+
+  function toggleInfo(articleid,info) {
+
+  	var entry = document.getElementById(articleid);
+  	var abs = document.getElementById('abs_'+articleid);
+  	var rev = document.getElementById('rev_'+articleid);
+  	var bib = document.getElementById('bib_'+articleid);
+
+  	if (abs && info == 'abstract') {
+  		abs.className.indexOf('noshow') == -1?abs.className = 'abstract noshow':abs.className = 'abstract show';
+  	} else if (rev && info == 'review') {
+  		rev.className.indexOf('noshow') == -1?rev.className = 'review noshow':rev.className = 'review show';
+  	} else if (bib && info == 'bibtex') {
+  		bib.className.indexOf('noshow') == -1?bib.className = 'bibtex noshow':bib.className = 'bibtex show';
+  	} else {
+  		return;
+  	}
+
+  	// check if one or the other is available
+  	var revshow; var absshow; var bibshow;
+  	(abs && abs.className.indexOf('noshow') == -1)? absshow = true: absshow = false;
+  	(rev && rev.className.indexOf('noshow') == -1)? revshow = true: revshow = false;
+  	(bib && bib.className.indexOf('noshow') == -1)? bibshow = true: bibshow = false;
+
+  	// highlight original entry
+  	if(entry) {
+  		if (revshow || absshow || bibshow) {
+  		entry.className = 'entry highlight show';
+  		} else {
+  		entry.className = 'entry show';
+  		}
+  	}
+
+  	// When there's a combination of abstract/review/bibtex showing, need to add class for correct styling
+  	if(absshow) {
+  		(revshow||bibshow)?abs.className = 'abstract nextshow':abs.className = 'abstract';
+  	}
+  	if (revshow) {
+  		bibshow?rev.className = 'review nextshow': rev.className = 'review';
+  	}
+
+  }
+
+  function setStatistics (hits) {
+  	if(hits < 0) { hits=numEntries; }
+  	if(stats) { stats.firstChild.data = hits + '/' + numEntries}
+  }
+
+  function getTextContent(node) {
+  	// Function written by Arve Bersvendsen
+  	// http://www.virtuelvis.com
+
+  	if (node.nodeType == 3) {
+  	return node.nodeValue;
+  	} // text node
+  	if (node.nodeType == 1 && node.className != "infolinks") { // element node
+  	var text = [];
+  	for (var chld = node.firstChild;chld;chld=chld.nextSibling) {
+  		text.push(getTextContent(chld));
+  	}
+  	return text.join("");
+  	} return ""; // some other node, won't contain text nodes.
+  }
+
+  function showAll(){
+  	closeAllInfo();
+  	for (var i = 0; i < numEntries; i++){ entryRows[i].className = 'entry show'; }
+  }
+
+  function closeAllInfo(){
+  	for (var i=0; i < numInfo; i++){
+  		if (infoRows[i].className.indexOf('noshow') ==-1) {
+  			infoRows[i].className = infoRows[i].className + ' noshow';
+  		}
+  	}
+  }
+
+  function clearQS() {
+  	qsfield.value = '';
+  	showAll();
+  }
+
+  function redoQS(){
+  	showAll();
+  	quickSearch(qsfield);
+  }
+
+  function updateSetting(obj){
+  	var option = obj.id;
+  	var checked = obj.value;
+
+  	switch(option)
+  	 {
+  	 case "opt_searchAbs":
+  	   searchAbstract=!searchAbstract;
+  	   redoQS();
+  	   break;
+  	 case "opt_searchRev":
+  	   searchReview=!searchReview;
+  	   redoQS();
+  	   break;
+  	 case "opt_useRegExp":
+  	   searchRegExp=!searchRegExp;
+  	   redoQS();
+  	   break;
+  	 case "opt_noAccents":
+  	   noSquiggles=!noSquiggles;
+  	   loadTableData();
+  	   redoQS();
+  	   break;
+  	 }
+  }
+
+  function initPreferences(){
+  	if(searchAbstract){document.getElementById("opt_searchAbs").checked = true;}
+  	if(searchReview){document.getElementById("opt_searchRev").checked = true;}
+  	if(noSquiggles){document.getElementById("opt_noAccents").checked = true;}
+  	if(searchRegExp){document.getElementById("opt_useRegExp").checked = true;}
+
+  	if(numAbs==0) {document.getElementById("opt_searchAbs").parentNode.style.display = 'none';}
+  	if(numRev==0) {document.getElementById("opt_searchRev").parentNode.style.display = 'none';}
+  }
+
+  function toggleSettings(){
+  	var togglebutton = document.getElementById('showsettings');
+  	var settings = document.getElementById('settings');
+
+  	if(settings.className == "hidden"){
+  		settings.className = "show";
+  		togglebutton.innerText = "close settings";
+  		togglebutton.textContent = "close settings";
+  	}else{
+  		settings.className = "hidden";
+  		togglebutton.innerText = "settings...";
+  		togglebutton.textContent = "settings...";
+  	}
+  }
+
+  -->
+  </script>
+
+
+</head>
+
+<body>
+  <section class="sidebar">
+  <a href="./index.html">
+    <img src="./MySite_files/me.jpg" width="175" alt="">
+  </a>
+
+  <style type="text/css">
+  body {
+    background-color: white; line-height: 1.2; padding: 1em; color: #2E2E2E; margin: auto auto; }
+
+  form#quicksearch { width: auto; border-style: solid; border-color: gray; border-width: 1px 0px; padding: 0.7em 0.5em; display:none; position:relative; }
+  span#searchstat {padding-left: 1em;}
+
+  div#settings { margin-top:0.7em; /* border-bottom: 1px transparent solid; background-color: #efefef; border: 1px grey solid; */ }
+  div#settings ul {margin: 0; padding: 0; }
+  div#settings li {margin: 0; padding: 0 1em 0 0; display: inline; list-style: none; }
+  div#settings li + li { border-left: 2px #efefef solid; padding-left: 0.5em;}
+  div#settings input { margin-bottom: 0px;}
+
+  div#settings.hidden {display:none;}
+
+  #showsettings { border: 1px grey solid; padding: 0 0.5em; float:right; line-height: 1.6em; text-align: right; }
+  #showsettings:hover { cursor: pointer; }
+
+  .invalidsearch { background-color: red; }
+  input[type="button"] { background-color: #efefef; border: 1px #2E2E2E solid;}
+
+  table { border: 1px gray none; width: 100%; empty-cells: show; border-spacing: 0em 0.1em; margin: 1em 0em; }
+  th, td { border: none; padding: 0.5em; vertical-align: top; text-align: justify; }
+
+  td a { color: navy; text-decoration: none; }
+  td a:hover  { text-decoration: underline; }
+
+  tr.noshow { display: none;}
+  tr.highlight td { background-color: #EFEFEF; border-top: 2px #2E2E2E solid; font-weight: bold; }
+  tr.abstract td, tr.review td, tr.bibtex td { background-color: #EFEFEF; text-align: justify; border-bottom: 2px #2E2E2E solid; }
+  tr.nextshow td { border-bottom-style: none; }
+
+  tr.bibtex pre { width: auto; overflow: auto; white-space: pre-wrap;}
+  p.infolinks { margin: 0.3em 0em 0em 0em; padding: 0px; }
+
+  @media print {
+    p.infolinks, #qs_settings, #quicksearch, t.bibtex { display: none !important; }
+    tr { page-break-inside: avoid; }
+  }
+  </style>
+
+  <section class="name">
+    <a href="file://files.umn.edu/">
+      <span id="fname">Graduate Researcher</span>
+      <span id="lname">Digital Technology Center University of Minnesota</span>
+    </a>
+  </section>
+
+  <section class="meta">
+    <a href="https://scholar.google.com/citations?user=XKFQX4gAAAAJ&hl=en" target="_blank"><i class="ai ai-google-scholar-square ai-2x"></i></a>
+    <a href="https://github.com/FatemehSheikholeslami" target="_blank"><i class="fa fa-github fa-2x"></i></a>
+    <a href="https://www.linkedin.com/in/fateme-sheikholeslami-9871a844/" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+  </section>
+
+  <section class="sections">
+    <ul>
+	<li><a href="./index.html">Home</a></li>
+	<li><a href="./Research.html">Research</a></li>
+        <li><a href="./Publications.html">Publications</a></li> 
+	<li><a href="./Presentations.html">Presentations</a></li>       
+	<li><a href="./MySite_files/Fateme_CV.pdf">CV</a></li>
+	<li><a href="https://github.com/FatemehSheikholeslami" target="_blank">Code</a></li>           
+	
+	  <li><script language="JavaScript">
+    var username = "f.sheikholeslami";
+    var hostname = "gmail.com";
+    var linktext = "Contact" ;
+    document.write("<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>");
+</script></li>
+    </ul>
+  </section>
+</section>
+
+  <section class="content">
+  <h1 id="Home">
+    <a href="./index.html">Fatemeh Sheikholeslami - Research by topic</a>
+  </h1>
+	
+
+
+  </div>
+  </form>
+  
+
+
+
+
+<h2>  Adversarial input detection in deep neural networks </h2>
+
+
+
+<dd> Despite their unprecedented performance in various domains, utilization of Deep Neural Networks (DNNs) in safety-critical environments is severely limited in the presence of even small adversarial perturbations. To address this issue, we have developed a randomized approach to detecting such perturbations based on minimum uncertainty metrics that rely on sampling at the hidden layers during the DNN inference stage. Being modular, the novel detector of adversaries can be conveniently employed by any pre-trained DNN at no extra training overhead. Selecting which units to sample per hidden layer entails quantifying the amount of DNN output uncertainty from the viewpoint of Bayesian neural networks, where the overall uncertainty is expressed in terms of its layer-wise components. Minimum uncertainty based detection is performed via exact as well as  approximate low-complexity sampling, where insightful links with state-of-the-art randomized adversarial detectors are made, and improved detection performance is demonestrated through extensive tests on state-of-the-art convolutional neural networks for various types of adversarial attacks.</dl>
+
+
+<br/>
+
+
+</dl>
+
+<br>
+
+<dd><center>
+    <img src="./research/pics/nn.png" width="400" alt="" />
+</center> 
+<h4>  Publications </h4>
+
+<dd>1. <u>F. Sheikholeslami</u>, S. Jain, and G. B. Giannakis, <i><strong> Randomized defenses against adversarial images in convolutional neural 	networks, </strong>IEEE Intl. Conf. on Acoustics, Speech, and Signal Processing (ICASSP), </i> Brighton, UK, May 2019. </dl>
+  <dd><br/>
+  <dd>2. <u>F. Sheikholeslami</u>, S. Jain, and G. B. Giannakis, <i><strong> Minimum uncertainty based detection of adversaries in deep neural networks, </strong>submitted to IEEE Trans. on Pattern Analysis and Machine Intelligence.  </i> (<a href="https://arxiv.org/pdf/1904.02841">arxiv</a>) 
+</dd> 
+
+<br/>
+
+
+
+
+
+
+<h2>  Reinforcement learning for content caching </h2>
+
+<dd>Small basestations (SBs) equipped with caching units have the potential to handle unprecedented demand growth in heterogeneous networks by prefetching popular files during off-peak traffic hours, storing in local cache, and servicing them to the edge user at peak  periods. To intelligently prefetch, each SB must learn what and when to cache, while taking into account SB memory limitations, the massive number of available contents, the unknown  popularity profiles, as well as the space-time popularity dynamics of user file requests. In our approach, we have modeled local and global user requests as Markov processes, and a reinforcement learning (RL) framework is put forth for finding the optimal caching <i>policy</i> when the transition probabilities involved are unknown. The novel RL-based caching relies on a Q-learning algorithm to implement the optimal policy in an online fashion, thus enabling  the cache control unit at the SB to learn, track, and possibly adapt to the underlying dynamics. 
+	To endow the algorithm with scalability, a linear function approximation of the proposed Q-learning is introduced, offering faster convergence, reduced complexity and memory requirements. 
+
+<br/>
+
+<br/>
+
+<dd><center>
+    <img src="./research/pics/rl.png" width="350" alt="" />
+</center> 
+<h4>  Publications </h4>
+
+  <dd>A. Sadeghi, <u>F. Sheikholeslami</u>, A. Marquez, and G. B. Giannakis, <i><strong> Reinforcement learning for adaptive caching with dynamic storage pricing, </strong> submitted to IEEE Journal on Selected Areas in Communications.</i> (<a href="https://arxiv.org/abs/1812.08593">arxiv</a>)  </dl>
+  <dd> <br/>
+  <dd>A. Sadeghi, <u>F. Sheikholeslami</u>, G. B. Giannakis, <i><strong> Optimal and scalable caching for 5G using reinforcement learning of space-time popularities, </strong> IEEE Journal on Special Topics in Signal Processing,</i> vol. 12, no. 1, pp. 180-190, February 2018. (<a href="https://arxiv.org/pdf/1708.06698">arxiv</a>) </dl> 
+
+
+
+  <dd> <br/>
+<dd>A. Sadeghi, <u>F. Sheikholeslami</u>, A. Marques, and G. B. Giannakis, <i><strong>Reinforcement learning for 5G caching with dynamic costs, </strong> Proc. of IEEE Intl. Conf. on Acoustics, Speech, and Signal Processing (ICASSP),</i> Calgary, CA, April 2018. </dl>
+  <dd> <br/>
+<dd>A. Sadeghi, <u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong>Dynamic Proactive Caching via Reinforcement Learning, </strong> IEEE Proc. of SPAWC,</i> Greece, July, 2018.</dd>			
+
+
+
+
+
+
+
+<h2>  Robust tensor-based community detection on large-scale graphs </h2>
+<dd> 
+<dd><center>
+    <img src="./research/pics/tensor2.png" width="300" alt="" />    
+<img src="./research/pics/tensor3.png" width="265" alt="" />
+</center> 
+<h4>  Publications </h4>
+<dd><u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong> Overlapping community detection via constrained PARAFAC: A divide and conquer approach, </strong> IEEE Intl. Conf. on Data Mining (ICDM),</i> New Orleans, USA, 2017 (Regular paper- Acceptance rate: 9.25\%). (<a href="https://ieeexplore.ieee.org/document/8215485">IEEE</a>) (<a href="https://par.nsf.gov/servlets/purl/10074982">WSDM Workshop</a> ) 
+<dd><br>
+<dd><u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong> Identification of overlapping communities via constrained egonet tensor decomposition, </strong>  IEEE Transactions on Signal Processing,</i> vol. 66, no. 21, pp. 5730-5745, November 2018. (<a href="https://arxiv.org/pdf/1707.04607.pdf">arxiv</a>)</dl> 
+<dd><br/>
+
+<dd> <u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong> Soft Unveiling of Communities via Egonet Tensors, </strong> Proc. of Asilomar Conf.,</i> Pacific Grove, CA, Oct. 29 - Nov. 1, 2017. 
+<dd><br>
+<dd> <u>F. Sheikholeslami</u>, B. Baingana, and G. B. Giannakis and N. D. Sidiropoulos, <i><strong> Egonet tensor decomposition for community identification, </strong> Proc. of Globalsip,</i> Washington, DC, Dec. 7-9, 2016. </dd>
+
+
+
+
+
+
+<h2> Scalable kernel-based feature extraction on a budget </h2>
+<dd> 
+<dd><center>
+    <img src="./research/pics/kernels.png" width="280" alt="" />
+</center> 
+<h4>  Publications </h4>
+
+<dd><u>F. Sheikholeslami</u>, D. K. Berberidis, and G. B. Giannakis, <i><strong> Large-scale kernel-based feature extraction via budgeted nonlinear subspace tracking, </strong> IEEE Transactions on Signal Processing,</i> vol. 66, no. 8, pp. 1967-1981, April 2018. (<a href="https://arxiv.org/pdf/1601.07947.pdf">arxiv</a>) </dl>
+<dd><br/>
+<dd><u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong> Scalable Kernel-based Learning via Low-rank Approximation of Lifted Data, </strong> Proc. of Allerton Conf. on Comm., Control, and Computing,</i> Urbana, IL, Oct. 4-6, 2017.  </dl> 
+<dd><br>
+<dd><u>F. Sheikholeslami</u>, D. K. Berberidis, and G. B. Giannakis, <i><strong> Memory efficient low-rank non-linear subspace tracking, </strong> Proc. of CAMSAP Conf.,</i> Curacao, Dutch Antilles, Dec. 10-13, 2017.</dl>
+<dd><br>  
+<dd><u>F. Sheikholeslami</u>, D. K. Berberidis, and G. B. Giannakis, <i><strong> Kernel-based Low-rank Feature Extraction on a Budget for Big Data Streams,</strong> Proc. of Globalsip Conf.,</i> Orlando, FL, Dec., 2015.</dl>
+<dd><br>
+  <dd><u>F. Sheikholeslami</u>, and G. B. Giannakis, <i><strong> Online Subspace Learning and Nonlinear Classification of Big Data with Misses, </strong> Proc. of Conf. on Info. Sciences and Systems,</i> Johns Hopkins Univ., Baltimore, MD, March 18-20, 2015. </dl>
+  
+<dd><br>
+<dd><u>F. Sheikholeslami</u>, M. Mardani, and G. B. Giannakis, <i><strong> Classification of Streaming Big Data with Misses, </strong> Proc. of Asilomar Conf. on Signals, Systems, and Computers,</i> CA, Nov. 2014.</dd>
+
+
+
+
+<h2> Spectrum Handoff in Cognitive radio networks </h2>
+<dd> <br>
+<h4>  Publications </h4>
+
+<dd><u>F. Sheikholeslami</u>, M. Nasiri-Kenari and F. Ashtiani, <i><strong> Optimal Probabilistic Initial and Target Channel Selection for Spectrum Handoff in Cognitive Radio Networks,</strong>  IEEE Transaction on Wireless Communications,</i> vol. 14, no. 1, 2015. (<a href="https://ieeexplore.ieee.org/abstract/document/6891364">arxiv</a>)<dd><br>
+
+<dd>H. Shokri Ghadikolaei, <u>F. Sheikholeslami</u>, M. Nasiri-Kenari, <i><strong> Distributed multiuser sequential channel sensing schemes in multichannel cognitive radio networks,</strong> IEEE Transactions on Wireless Communications,</i> vol. 12, no. 5, 2013. (<a href="https://ieeexplore.ieee.org/document/6493528">arxiv</a>) </dd>
+  
+	
+<dd><br>
+
+
+
+  </tr>
+  </tbody>
+  </table>
+
+
+  <section class="byline">
+    Updated: April, 2019
+  </section>
+
+</section>
+
+</body></html>

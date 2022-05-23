@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)file://files.umn.edu/cse/UmSaveDocs/anikolak/Documents/Jula%20Code/MySite.html#learning-mnist -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz" rel="stylesheet">
+  <title>
+    Fatemeh Sheikholeslami
+  </title>
+
+  <meta name="author" content="Fatemeh Sheikholeslami">
+  <meta name="description" content="data mining, learning over networks, machine-learning, graph, signal processing, tracking">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="clustering, data mining, link-analysis, ranking, signal processing on graph, recommender systems, collaborative filtering, julia programming language, software">
+  <link rel="alternate" type="application/rss+xml" href="file://files.umn.edu/atom.xml">
+
+
+  <link rel="stylesheet" href="./css/academicons.css" />
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="./MySite_files/base.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="./MySite_files/pygments.css" type="text/css">
+  <link media="only screen and (max-device-width: 480px)" href="./MySite_files/mobile.css" type="text/css" rel="stylesheet">
+  <link media="only screen and (device-width: 768px)" href="./MySite_files/mobile.css" type="text/css" rel="stylesheet">
+  <link href="./MySite_files/css" rel="stylesheet" type="text/css">
+  <link rel="apple-touch-icon" href="http://www.breloff.com/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <section class="sidebar">
+    <a href="./index.html">
+      <img src="./MySite_files/me.jpg" width="175" alt="">
+    </a>
+
+    <style type="text/css">
+      body {
+        background-color: white;
+        line-height: 1.2;
+        padding: 1em;
+        color: #2E2E2E;
+        margin: auto auto;
+      }
+
+      form#quicksearch {
+        width: auto;
+        border-style: solid;
+        border-color: gray;
+        border-width: 1px 0px;
+        padding: 0.7em 0.5em;
+        display: none;
+        position: relative;
+      }
+
+      span#searchstat {
+        padding-left: 1em;
+      }
+
+      div#settings {
+        margin-top: 0.7em;
+        /* border-bottom: 1px transparent solid; background-color: #efefef; border: 1px grey solid; */
+      }
+
+      div#settings ul {
+        margin: 0;
+        padding: 0;
+      }
+
+      div#settings li {
+        margin: 0;
+        padding: 0 1em 0 0;
+        display: inline;
+        list-style: none;
+      }
+
+      div#settings li+li {
+        border-left: 2px #efefef solid;
+        padding-left: 0.5em;
+      }
+
+      div#settings input {
+        margin-bottom: 0px;
+      }
+
+      div#settings.hidden {
+        display: none;
+      }
+
+      #showsettings {
+        border: 1px grey solid;
+        padding: 0 0.5em;
+        float: right;
+        line-height: 1.6em;
+        text-align: right;
+      }
+
+      #showsettings:hover {
+        cursor: pointer;
+      }
+
+      .invalidsearch {
+        background-color: red;
+      }
+
+      input[type="button"] {
+        background-color: #efefef;
+        border: 1px #2E2E2E solid;
+      }
+
+      table {
+        border: 1px gray none;
+        width: 100%;
+        empty-cells: show;
+        border-spacing: 0em 0.1em;
+        margin: 1em 0em;
+      }
+
+      th,
+      td {
+        border: none;
+        padding: 0.5em;
+        vertical-align: top;
+        text-align: justify;
+      }
+
+      td a {
+        color: navy;
+        text-decoration: none;
+      }
+
+      td a:hover {
+        text-decoration: underline;
+      }
+
+      tr.noshow {
+        display: none;
+      }
+
+      tr.highlight td {
+        background-color: #EFEFEF;
+        border-top: 2px #2E2E2E solid;
+        font-weight: bold;
+      }
+
+      tr.abstract td,
+      tr.review td,
+      tr.bibtex td {
+        background-color: #EFEFEF;
+        text-align: justify;
+        border-bottom: 2px #2E2E2E solid;
+      }
+
+      tr.nextshow td {
+        border-bottom-style: none;
+      }
+
+      tr.bibtex pre {
+        width: auto;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+
+      p.infolinks {
+        margin: 0.3em 0em 0em 0em;
+        padding: 0px;
+      }
+
+      @media print {
+
+        p.infolinks,
+        #qs_settings,
+        #quicksearch,
+        t.bibtex {
+          display: none !important;
+        }
+
+        tr {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+
+    <section class="name">
+      <a href="file://files.umn.edu/">
+        <span id="fname">PhD candidate<br/></span>
+        <span id="lname">Digital Technology Center<br/> ECE Department<br/> University of Minnesota</span>
+
+      </a>
+    </section>
+
+
+    <section class="meta">
+
+<a href="https://scholar.google.com/citations?user=XKFQX4gAAAAJ&hl=en" target="_blank"><i class="ai ai-google-scholar-square ai-2x"></i></a>
+
+      <a href="https://www.linkedin.com/in/fateme-sheikholeslami-9871a844/" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>    
+        <a href="https://github.com/FatemehSheikholeslami" target="_blank"><i class="fa fa-github fa-2x"></i></a>
+
+    </section>
+
+    <section class="sections">
+      <ul>
+        <li><a href="./index.html">Home</a></li>
+	<li><a href="./Research.html">Research</a></li>
+        <li><a href="./Publications.html">Publications</a></li>  
+	<li><a href="./Presentations.html">Presentations</a></li>      
+	<li><a href="./MySite_files/Fateme_CV.pdf">CV</a></li>  
+	<li><a href="https://github.com/FatemehSheikholeslami" target="_blank">Code</a></li>        
+
+        <li>
+          <script language="JavaScript">
+            var username = "f.sheikholeslami";
+            var hostname = "gmail.com";
+            var linktext = "Contact";
+            document.write("<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>");
+          </script>
+        </li>
+      </ul>
+    </section>
+  </section>
+
+  <section class="content">
+    <h1 id="Home">
+      <a href="https://fatemehsheikholeslami.github.io/">Fatemeh Sheikholeslami </a>
+    </h1>
+
+
+    <h2 id="AboutMe"> Welcome </h2>
+
+    <p>I'm a PhD candidate (exp. grad. '19) of the <a href="http://www.ece.umn.edu"> Electrical and Computer Engineering</a> (ECE) Department </a> at
+      the <b>University of Minnesota</b>, under the supervision of <a href="http://spincom.umn.edu/georgios/"> Prof. Georgios B. Giannakis</a>.</p>
+      
+      <p>My research interests span the areas of <b>Machine
+      Learning</b>, <b>Statistical Signal Processing</b>, and <b>Optimization</b>.
+      Specifically, I am interested in design of robust and efficient <b>algorithmic frameworks</b> for machine learning tasks. I am currently focused on <b>robust learning for deep neural networks</b>, and particularly on uncertainty estimation in adversarial settings for reliable utilization of DNNs. </p> 
+
+ <p>Please see <a href="./Research.html">Research</a> and my <a href="https://scholar.google.com/citations?user=XKFQX4gAAAAJ&hl=en"> Google Scholar </a> for a complete list of publications.
+
+
+
+      <!--
+    <h2 id="News">News</h2>
+    <ul>
+      <li><u>August '18</u>: The paper "<i>Adaptive Diffusions for Scalable Learning over Graphs,</i>" by Dimitris Berberidis, Athanasios N.
+        Nikolakopoulos, and Georgios B. Giannakis won the <strong>Best Paper Award</strong> at
+        the <b>ACM International Conference on Knowledge Discovery and Data mining 2018 (Mining and Learning with Graphs Workshop)</b>. [<a href="https://www.dtc.umn.edu/news.php?type=news_item&nid=376">more
+        </a>]
+      </li>
+      <li><u>August '17</u>: The paper "<i>Factored Proximity Models for Top-N Recommendations,</i>" by Athanasios N.
+        Nikolakopoulos,
+        Vassilis Kalantzis, Efstratios Gallopoulos and John D. Garofalakis won the <strong>Best Paper Award</strong> at
+        the
+        <b>IEEE International Conference on Big Knowledge (IEEE ICBK’17)</b>. [<a href="http://www.dtc.umn.edu/news.php?type=news_item&nid=365">more
+        </a>]
+      </li>
+      <li><u>May '17</u>: I have joined the <i>Digital Technology Center</i> of the University of Minnesota, as <b>Research
+          Associate</b>.</li>
+    </ul>
+  -->
+
+<!--
+    <h2 id="News">Selected Publications</h2>
+    <table id="qs_table" border="1">
+      <tbody>
+        <tr id="BNG18" class="entry">
+            <td><u>D. Berberidis</u>, A. N. Nikolakopoulos, G. B. Giannakis, <i><strong>"Adaptive Diffusions for Scalable Learning over Graphs"</strong></i>, ACM SIGKDD 2018 (MLG18) and IEEE Transactions of Signal Processing 2018. (<strong style="color:#CE0000">Best Paper Award</strong>)
+          </tr>
+          <tr id="BNG18" class="entry">
+            <td><u>D. Berberidis</u>, and G. B. Giannakis, <i><strong>"Data-adaptive Active Sampling for Efficient Graph-Cognizant Classification,""</strong></i>, IEEE Transactions on Signal Processing, vol. 66, no. 19, pp. 5167-5179, October 2018 
+          </tr>
+          <tr id="BNG18" class="entry">
+            <td><u>D. Berberidis</u>, and G. B. Giannakis, <i><strong>"Data Sketching for Large-Scale Kalman Filtering,""</strong></i>, IEEE Transactions on Signal Processing, vol. 65, no. 14, pp. 3688-3701, 2017 
+          </tr>
+          <tr id="BNG18" class="entry">
+            <td><u>D. Berberidis</u>, V. Kekatos, and G. B. Giannakis, <i><strong>"Online censoring for large-scale regressions with application to streaming big data,""</strong></i>, IEEE Transactions on Signal Processing, vol. 64, no. 15, pp. 3854-3867, 2016
+          </tr>          
+      </tbody>
+    </table>
+     -->
+
+    <!--
+    <h2 id="News">Professional Activities</h2>
+    <table id="qs_table" border="1">
+      <tbody>
+        <tr id="PC-SIAM-SDM" class="entry">
+          <td> Program Committee Member: <b>ACM RecSys 2018</b>, <b>SIAM SDM 2018</b>, <b>PAKDD 2018</b>, <b>PAKDD 2019</b>
+        </tr>
+        <tr id="PC-SIAM-SDM" class="entry">
+          <td> Journal Reviewer: <b>IEEE TKDE</b>, <b>IEEE TSP</b>, <b>PLoS ONE</b>, <b>Neurocomputing</b>.
+        </tr>
+      </tbody>
+    </table>
+-->
+
+    <h2 id="CV">Education</h2>
+
+      
+    <h3>PhD in Electrical Engineering </h3>
+    <ul class="square">
+      <li>PhD Dissertation: <b>Scalable Kernel Learning, Tensors in Community Identification, and Efficient Adversary Detection in Deep Convolutional Neural Networks
+</b> <br /></li>
+      <!-- <li>Advising Commitee: Prof. Giannakis (supervisor), Prof. Karypis, Prof. Zhili Zhang </li>
+[<a href="http://nemertes.lis.upatras.gr/jspui/bitstream/10889/9576/1/Nikolakopoulos...pdf"
+          target="_blank">pdf</a>]
+-->
+      Electrical and Computer Engineering Department, University of Minnesota, MN, USA.
+    </ul>
+    
+
+    <h3>MSc in Electrical and Computer Engineering</h3>
+    <ul class="square">
+      <li>ECE Department, Sharif University of Technology, August 2012</i></li>
+    </ul>
+    <h3> BSc in Electrical and Computer Engineering</h3>
+    <ul class="square">
+      <li>Electrical and Computer Engineering, University of Tehran, Augues 2010</i></li>
+    </ul>
+
+
+
+    <section class="byline">
+      Updated: March, 2019
+    </section>
+
+  </section>
+
+</body>
+
+</html>
